@@ -26,13 +26,21 @@ import seaborn as sns
 import csv
 import glob, os
 
+print("TUTTO OK LE LIBRERIE FUNZIONANO")
+# In[2]:
 
+
+""" When using different dataset the part to change this code are :
+    Retrive, Parser, The config variable(option), and the part to evaluate the RMSE
+
+
+# In[5]:
 
 
 def retrive():
     a=[]
     i=0
-    for file in os.listdir('data/data/'):
+    for file in os.listdir('/home/alessio/Desktop/parser/parsed_data/'):
         if file.endswith(".csv"):
             filename = file
             a.append(filename)
@@ -51,7 +59,7 @@ def load_data(vettore,leng):
         day = vettore[x]
         #print(vettore[x])
         if contr == True:
-            series_temp = read_csv('data/data/%s.csv'%day, header=0,
+            series_temp = read_csv('/home/alessio/Desktop/parser/parsed_data/%s.csv'%day, header=0,
                           parse_dates={'date_time' :['Day','Hour','Minute']}, index_col = 'date_time',
                           squeeze=True, date_parser=parser)
             series_temp = series_temp[series_temp['Byte_count'] != 0]
@@ -62,7 +70,7 @@ def load_data(vettore,leng):
             counter = counter + len(series_temp)
             #print("Rows number (tot): ",counter)
         else:
-            series = read_csv('data/data/%s.csv'%day, header=0,
+            series = read_csv('/home/alessio/Desktop/parser/parsed_data/%s.csv'%day, header=0,
                           parse_dates={'date_time' :['Day','Hour','Minute']}, index_col = 'date_time',
                           squeeze=True, date_parser=parser)
             counter = len(series)
@@ -101,16 +109,16 @@ def series_to_supervised(data, n_in=1, n_out=1, dropnan=True):
 def runs_exper(exp,epoc,lag):
 	#Configuration
 
-	exp_number = exp
-	test_samples = 20000
-	n_features = 2
-	n_seq = 3
-	n_lag = lag
-	epoch = epoc
-	n_obs = n_features*n_lag
-	n_out = n_features*n_seq #Become the output of the lstm, the n. columns of the output
-	path = ""
-	filename = "RMSE_Res_N%d_Ep%d_Lg%d.csv" %(exp_number,epoch,n_lag)
+		exp_number = exp
+		test_samples = 20000
+		n_features = 2
+		n_seq = 3
+		n_lag = lag
+		epoch = epoc
+		n_obs = n_features*n_lag
+		n_out = n_features*n_seq #Become the output of the lstm, the n. columns of the output
+		path = "/home/alessio/Desktop/tensorflow/scripts_tensorflow/RNNs/Mulivariate_forecasting/Multivariate-multisteps/Experiments/"
+		filename = "RMSE_Res_N%d_Ep%d_Lg%d.csv" %(exp_number,epoch,n_lag)
 
 
 	#Retrive each filename where the series is stored
@@ -123,7 +131,36 @@ def runs_exper(exp,epoc,lag):
 	tk_last2h = tk_last2h.index 
 
 
+	# In[16]:
 
+
+
+
+
+	# In[17]:
+
+
+	sns.distplot(series.Request_count)
+
+
+	# In[18]:
+
+
+	#r = series.Request_count.value_counts
+	#r
+
+
+	# In[19]:
+
+
+
+
+
+
+
+
+
+	# In[20]:
 
 
 	#scale the data
@@ -177,23 +214,40 @@ def runs_exper(exp,epoc,lag):
 	history = model.fit(train_input, train_output, epochs=epoch, batch_size=72, verbose=1, shuffle=False)
 
 
+	# In[ ]:
+
+
+
+
+
+	# In[33]:
+
+
 	#prediction of the model,need test input4
+	#   se la metto in una funzione a parte devo fare una reshape di test input --> test_input = test_input.reshape(test_input.shape[0], n_lag, n_features)
 	y_predict = model.predict(test_input)
 
 
 	# In[34]:
 
 
-	"""Each columns of the y_predict is a prediction of each feature of my dataset"""
+
 	#print('y_predict_head \n',y_predict[:3])
-	#print('y_predict_tail \n',y_predict[-3:])
+	print('y_predict_tail \n',y_predict[-3:])
 	#print('test_predict_head \n',test_output[:3])
-	#print('test_predict_tail \n',test_output[-3:])
+	print('test_predict_tail \n',test_output[-3:])
+
+
+	# In[ ]:
 
 
 
 
-	""" The rmse here is an error valuated on [0 1] """
+
+	# In[35]:
+
+
+	
 	# Compute the error ONLY in the "Requests Count" columns. This code change if the feaures of the data change.
 	for i in range(1,n_out,2):
 	    rmse = sqrt(mean_squared_error(y_predict[:,i], test_output[:,i]))
@@ -209,13 +263,13 @@ def runs_exper(exp,epoc,lag):
 	# In[16]:
 
 
-	""" Evaluation With te original data Data """
+	
 
 
 	# In[36]:
 
 
-	"""Reshape for the evaluation"""
+
 	#Using the test data concatenate it with the forecast and with the train.
 	test_input = test_input.reshape(test_input.shape[0],n_obs)
 	#test_input.shape  TIP: this result should be equal to the print beafore "Test input data (X):"
@@ -247,6 +301,13 @@ def runs_exper(exp,epoc,lag):
 	inv_output_groun = concatenate((test_1,test_2,test_3), axis=1)
 	#inv_output_groun
 
+
+	# In[19]:
+
+
+	#Compute The rmse
+
+
 	# In[42]:
 
 
@@ -258,11 +319,11 @@ def runs_exper(exp,epoc,lag):
 	    rmse = sqrt(mean_squared_error(inv_output_groun[:,(i+(i+1)):(i+(i+2))],inv_output_pred[:,(i+(i+1)):(i+(i+2))]))
 	    rmse_df.RMSE[i] = rmse
 	    print('t+%d RMSE: %f' % ((i+1), rmse))
-	rmse_df.to_csv(filename, sep='\t', encoding='utf-8')
-	"""for i in range(1,n_out,2):
-	    rmse = sqrt(mean_squared_error(inv_output_groun[:,i], inv_output_pred[:,i]))
-	    print('Test RMSE t+%d: %.3f'% (i , rmse))
-	"""
+	rmse_df.to_csv(path+filename, sep='\t', encoding='utf-8')    
+
+    rmse = sqrt(mean_squared_error(inv_output_groun[:,i], inv_output_pred[:,i]))
+    print('Test RMSE t+%d: %.3f'% (i , rmse))
+
 
 
 	# ## Save the LSTM and Ground Truth Forecast
@@ -279,8 +340,8 @@ def runs_exper(exp,epoc,lag):
 		truth_prediction['t+%d'%(i)]=inv_output_groun[:,i]
 		lstm_prediction['t+%d'%(i)]=inv_output_pred[:,i]
 	#truth_prediction        
-	lstm_prediction.to_csv('Result/lstm_prediction1000lag.csv', sep='\t', encoding='utf-8')
-	truth_prediction.to_csv('Result/test_prediction1000lag.csv', sep='\t', encoding='utf-8')
+	lstm_prediction.to_csv('/home/alessio/Desktop/tensorflow/scripts_tensorflow/RNNs/Mulivariate_forecasting/Multivariate-multisteps/Result/lstm_prediction1000lag.csv', sep='\t', encoding='utf-8')
+	truth_prediction.to_csv('/home/alessio/Desktop/tensorflow/scripts_tensorflow/RNNs/Mulivariate_forecasting/Multivariate-multisteps/Result/test_prediction1000lag.csv', sep='\t', encoding='utf-8')
 
 
 	# In[ ]:
@@ -292,13 +353,13 @@ def runs_exper(exp,epoc,lag):
 	# In[25]:
 
 
-	"""  Forecast Graphs """
+
 
 
 	# In[26]:
 
 
-	""" Fist Graph:  This graph show the last two hours and the last 3 minutes are the prediction, the ground vs LSTM """
+
 
 
 	# In[45]:
@@ -340,14 +401,14 @@ def runs_exper(exp,epoc,lag):
 	pyplot.legend(loc='upper left', fancybox=True, fontsize='large', framealpha=0.5)
 	pyplot.rcParams['figure.figsize'] = (12,9)
 	pyplot.tight_layout()
-	pyplot.savefig('plots/forecast_for_paper/forecast_ExpN_%d_Ep%d_Lg%d.png' %(exp_number,epoch,n_lag))
-#	pyplot.show()
+	pyplot.savefig(path+'plots/forecast_for_paper/forecast_ExpN_%d_Ep%d_Lg%d.png' %(exp_number,epoch,n_lag))
+	pyplot.show()
 
 
 	# In[29]:
 
 
-	""" Second Graph: The Ground Truth Prediction and the LSTM's Time Steps"""
+	
 
 
 	# In[30]:
@@ -368,20 +429,20 @@ def runs_exper(exp,epoc,lag):
 	pyplot.xlabel("Minutes",fontsize=14)
 	pyplot.legend(loc='upper left', fancybox=True, fontsize='large', framealpha=0.5)
 	pyplot.tight_layout()
-	pyplot.savefig('plots/forecast_ExpN_%d_Ep%d_Lg%d.png' %(exp_number,epoch,n_lag))
-#	pyplot.show()
+	pyplot.savefig(path+'plots/all/forecast_ExpN_%d_Ep%d_Lg%d.png' %(exp_number,epoch,n_lag))
+	pyplot.show()
 
 
 	# In[31]:
 
 
-	""" THIS SECTION SHOW HOW THE MODEL FIT THE GROUD TRUTH FOR THE TIME STEPS """
+	
 
 
 	# In[32]:
 
 
-	"""Graph 3: This graphs show how the timesteps t+1 ft well the Groud Truth"""
+	
 
 
 	# In[33]:
@@ -400,8 +461,8 @@ def runs_exper(exp,epoc,lag):
 	pyplot.xlabel("Minutes",fontsize=14)
 	pyplot.legend(loc='upper left', fancybox=True, fontsize='large', framealpha=0.5)
 	pyplot.tight_layout()
-	pyplot.savefig('plots/forecast_for_paper/forecast_t1_ExpN_%d_Ep%d_Lg%d.png' %(exp_number,epoch,n_lag))
-#	pyplot.show()
+	pyplot.savefig(path+'plots/forecast_for_paper/forecast_t1_ExpN_%d_Ep%d_Lg%d.png' %(exp_number,epoch,n_lag))
+	pyplot.show()
 
 
 	# In[34]:
@@ -422,8 +483,8 @@ def runs_exper(exp,epoc,lag):
 	pyplot.xlabel("Minutes",fontsize=14)
 	pyplot.legend(loc='upper left', fancybox=True, fontsize='large', framealpha=0.5)
 	pyplot.tight_layout()
-	pyplot.savefig('plots/forecast_for_paper/forecast_t2_ExpN_%d_Ep%d_Lg%d.png' %(exp_number,epoch,n_lag))
-#	pyplot.show()
+	pyplot.savefig(path+'plots/forecast_for_paper/forecast_t2_ExpN_%d_Ep%d_Lg%d.png' %(exp_number,epoch,n_lag))
+	pyplot.show()
 
 
 	# In[35]:
@@ -444,21 +505,21 @@ def runs_exper(exp,epoc,lag):
 	pyplot.xlabel("Minutes",fontsize=14)
 	pyplot.legend(loc='upper left', fancybox=True, fontsize='large', framealpha=0.5)
 	pyplot.tight_layout()
-	pyplot.savefig('plots/forecast_for_paper/forecast_t3_ExpN_%d_Ep%d_Lg%d.png' %(exp_number,epoch,n_lag))
-#	pyplot.show()
+	pyplot.savefig(path+'plots/forecast_for_paper/forecast_t3_ExpN_%d_Ep%d_Lg%d.png' %(exp_number,epoch,n_lag))
+	pyplot.show()
 
 
 def main():
 	#for i in range(15,25,5):
 		#for l in (3,15,30,60):	
-	for x in range(1,6):
-		exp=x
-		epoc=3
-		lag = 10
-		print("Run Experiment N %d, lag%d, epoch %d" %(exp,lag,epoc))
-		runs_exper(exp,epoc,lag)
+			for x in range(1,6):
+				exp=x
+				epoc=5
+				lag = 1000
+				print("Run Experiment N %d, lag%d, epoch %d" %(exp,l,i))
+				runs_exper(exp,epoc,lag)
 		
 main()
 
-
+"""
 
