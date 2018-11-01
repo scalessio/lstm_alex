@@ -5,6 +5,7 @@
 
 
 import pandas as pd
+import time
 from pandas import read_csv
 from pandas import DatetimeIndex
 from pandas import datetime
@@ -100,7 +101,7 @@ def series_to_supervised(data, n_in=1, n_out=1, dropnan=True):
 
 def runs_exper(exp,epoc,lag):
 	#Configuration
-
+						######UPDATE HEREEEEEE
 	exp_number = exp
 	test_samples = 20000
 	n_features = 2
@@ -133,7 +134,7 @@ def runs_exper(exp,epoc,lag):
 	#scaled_data
 	#Trasform Data as supervised problem (Sliding Window)
 	series_supervised = series_to_supervised(scaled_data, (n_lag-1), (n_seq+1))
-	series_supervised.head(2)
+	#series_supervised.head(2)
 
 
 	# In[21]:
@@ -269,7 +270,7 @@ def runs_exper(exp,epoc,lag):
 
 	# In[43]:
 
-
+							##################UPDATEHERE
 	idx = series.tail(20000)
 	idx = idx.index
 	truth_prediction = pd.DataFrame(index=idx)
@@ -449,14 +450,23 @@ def runs_exper(exp,epoc,lag):
 
 
 def main():
-	#for i in range(15,25,5):
-		#for l in (3,15,30,60):	
-	for x in range(1,6):
-		exp=x
-		epoc=3
-		lag = 10
-		print("Run Experiment N %d, lag%d, epoch %d" %(exp,lag,epoc))
-		runs_exper(exp,epoc,lag)
+	time_start=time.time()
+	for i in (3,5):
+		#for l in (38,15,30,60):	
+		for x in range(1,6):
+			exp=x
+			epoc=i
+			lag = 1000
+			print("Run Experiment N %d, lag%d, epoch %d" %(exp,lag,epoc))
+			runs_exper(exp,epoc,lag)
+	time_end = time.time()
+	duration = time_end-time_start
+	rows = ['Start','End','Duration']
+	timedf= DataFrame(columns=['Time'],index=rows)
+	timedf.iloc[0]=time_start
+	timedf.iloc[1]=time_end
+	timedf.iloc[2]=duration
+	timedf.to_csv('Duration.csv', sep='\t',encoding='utf-8')
 		
 main()
 
