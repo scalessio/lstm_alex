@@ -456,7 +456,7 @@ def main():
 		for x in range(1,6):
 			exp=x
 			epoc=i
-			lag = 1000
+			lag = 2000
 			print("Run Experiment N %d, lag%d, epoch %d" %(exp,lag,epoc))
 			runs_exper(exp,epoc,lag)
 	time_end = time.time()
