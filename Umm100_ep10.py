@@ -453,12 +453,12 @@ def main():
 	time_start=time.time()
 	#for i in (3,5):
 		#for l in (38,15,30,60):	
-	for x in range(2,6):
+	for x in range(4,6):
 		exp=x
-		epoc=5
+		epoc=10
 		lag =1000
 		print("Run Experiment N %d, lag%d, epoch %d" %(exp,lag,epoc))
-		runs_exper(exp,epoc,lag)
+	#	runs_exper(exp,epoc,lag)
 	time_end = time.time()
 	duration = time_end-time_start
 	rows = ['Start','End','Duration']
@@ -466,7 +466,7 @@ def main():
 	timedf.iloc[0]=time_start
 	timedf.iloc[1]=time_end
 	timedf.iloc[2]=duration
-	timedf.to_csv('Duration.csv', sep='\t',encoding='utf-8')
+	timedf.to_csv('Duration_ep10_lg1000.csv', sep='\t',encoding='utf-8')
 		
 main()
 
