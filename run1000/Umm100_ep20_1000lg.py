@@ -451,26 +451,13 @@ def runs_exper(exp,epoc,lag):
 
 def main():
 	time_start=time.time()
-<<<<<<< HEAD
-	#for i in (3,5):
-		#for l in (38,15,30,60):	
-	for x in range(3,6):
+
+	for x in range(1,6):
 		exp=x
 		epoc=20
 		lag =1000
-
 		print("Run Experiment N %d, lag%d, epoch %d" %(exp,lag,epoc))
-#		runs_exper(exp,epoc,lag)
-=======
-#	for i in (3,5):
-		#for l in (38,15,30,60):	
-	for x in (1,2):
-		exp=x
-		epoc=20
-		lag = 2000
-		print("Run Experiment N %d, lag%d, epoch %d" %(exp,lag,epoc))
-	#	runs_exper(exp,epoc,lag)
->>>>>>> 2fa15bd18591d69e3fe2d6e8a3904fc8f04482ba
+		runs_exper(exp,epoc,lag)
 	time_end = time.time()
 	duration = time_end-time_start
 	rows = ['Start','End','Duration']

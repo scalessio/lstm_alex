@@ -451,25 +451,12 @@ def runs_exper(exp,epoc,lag):
 
 def main():
 	time_start=time.time()
-<<<<<<< HEAD
-	#for i in (3,5):
-		#for l in (38,15,30,60):	
 	for x in range(4,6):
 		exp=x
 		epoc=10
 		lag =1000
 		print("Run Experiment N %d, lag%d, epoch %d" %(exp,lag,epoc))
-	#	runs_exper(exp,epoc,lag)
-=======
-#	for i in (3,5):
-		#for l in (38,15,30,60):	
-	for x in (2,4):
-		exp=x
-		epoc=10
-		lag = 2000
-		print("Run Experiment N %d, lag%d, epoch %d" %(exp,lag,epoc))
-#	runs_exper(exp,epoc,lag)
->>>>>>> 2fa15bd18591d69e3fe2d6e8a3904fc8f04482ba
+		runs_exper(exp,epoc,lag)
 	time_end = time.time()
 	duration = time_end-time_start
 	rows = ['Start','End','Duration']
@@ -477,11 +464,6 @@ def main():
 	timedf.iloc[0]=time_start
 	timedf.iloc[1]=time_end
 	timedf.iloc[2]=duration
-<<<<<<< HEAD
-	timedf.to_csv('Duration_ep10_lg1000.csv', sep='\t',encoding='utf-8')
-=======
-	timedf.to_csv('DurationEp10_lag2000.csv', sep='\t',encoding='utf-8')
->>>>>>> 2fa15bd18591d69e3fe2d6e8a3904fc8f04482ba
 		
 main()
 
